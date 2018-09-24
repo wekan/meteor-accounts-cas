@@ -165,7 +165,8 @@ const casValidate = (req, ticket, token, service, callback) => {
       console.log(err);
     } else {
       if (status) {
-        console.log("accounts-cas: user validated " + userData.id);
+        console.log(`accounts-cas: user validated ${userData.id}
+          (${JSON.stringify(userData)})`);
         _casCredentialTokens[token] = { id: userData.id };
         _userData = userData;
       } else {
@@ -181,7 +182,6 @@ const casValidate = (req, ticket, token, service, callback) => {
 /*
  * Register a server-side login handle.
  * It is call after Accounts.callLoginMethod() is call from client.
- *
  */
  Accounts.registerLoginHandler((options) => {
   if (!options.cas)
@@ -194,11 +194,53 @@ const casValidate = (req, ticket, token, service, callback) => {
 
   const result = _retrieveCredential(options.cas.credentialToken);
 
-  options = { profile: _userData };
-  const queryResult = Accounts.updateOrCreateUserFromExternalService("cas", result, options);
-  //Roles.setUserRoles(queryResult.userId, 'user');
-
-  return queryResult;
+  const attrs = Meteor.settings.cas.attributes || {};
+  // CAS keys
+  const fn = attrs.firstname || 'cas:givenName';
+  const ln = attrs.lastname || 'cas:sn';
+  const full = attrs.fullname;
+  const mail = attrs.mail || 'cas:mail'; // or 'email'
+  const uid = attrs.id || 'id';
+  if (attrs.debug) {
+    if (full) {
+      console.log(`CAS fields : id:"${uid}", fullname:"${full}", mail:"${mail}"`);
+    } else {
+      console.log(`CAS fields : id:"${uid}", firstname:"${fn}", lastname:"${ln}", mail:"${mail}"`);
+    }
+  }
+  const name = full ? _userData[full] : _userData[fn] + ' ' +  _userData[ln];
+  // https://docs.meteor.com/api/accounts.html#Meteor-users
+  options = {
+    // _id: Meteor.userId()
+    username: _userData[uid], // Unique name
+    emails: [
+      { address: _userData[mail], verified: true }
+    ],
+    createdAt: new Date(),
+    profile: {
+      // The profile is writable by the user by default.
+      name: name,
+      fullname : name,
+      email : _userData[mail]
+    },
+    active: true,
+    globalRoles: ['user']
+  };
+  if (attrs.debug) {
+    console.log(`CAS response : ${JSON.stringify(result)}`);
+  }
+  let user = Meteor.users.findOne({ 'username': options.username });
+  if (! user) {
+    if (attrs.debug) {
+      console.log(`Creating user account ${JSON.stringify(options)}`);
+    }
+    const userId = Accounts.insertUserDoc({}, options);
+    user = Meteor.users.findOne(userId);
+  }
+  if (attrs.debug) {
+    console.log(`Using user account ${JSON.stringify(user)}`);
+  }
+  return { userId: user._id };
 });
 
 const _hasCredential = (credentialToken) => {

@@ -1,8 +1,8 @@
 Package.describe({
   summary: "CAS support for accounts",
-  version: "0.0.7",
-  name: "xaionaro:accounts-cas",
-  git: "https://github.com/xaionaro/meteor-accounts-cas"
+  version: "0.1.0",
+  name: "ppoulard:accounts-cas",
+  git: "https://github.com/ppoulard/meteor-accounts-cas"
 });
 
 Package.onUse(function(api) {
@@ -13,7 +13,6 @@ Package.onUse(function(api) {
   // Export Accounts (etc) to packages using this one.
   api.imply('accounts-base', ['client', 'server']);
   api.use('underscore');
-
   api.add_files('cas_client.js', 'web.browser');
   api.add_files('cas_client_cordova.js', 'web.cordova');
   api.add_files('cas_server.js', 'server');

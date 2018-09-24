@@ -2,9 +2,11 @@ This is a merged repository of useful forks of: atoy40:accounts-cas
 ===================
 ([(https://atmospherejs.com/atoy40/accounts-cas](https://atmospherejs.com/atoy40/accounts-cas))
 
-## Essential improvements to atoy40 version
-* Added support of "redirect" instead of "popup window" (disable the popup window)
-* Use xmlparser instead of newline parsing
+## Essential improvements to atoy40 and xaionaro versions
+
+* Added support of CAS attributes
+
+With this plugin, you can pick CAS attributes : https://github.com/joshchan/node-cas/wiki/CAS-Attributes
 
 ## Install
 
@@ -12,9 +14,9 @@ This is a merged repository of useful forks of: atoy40:accounts-cas
 cd ~site
 mkdir packages
 cd packages
-git clone https://github.com/xaionaro/meteor-accounts-cas
+git clone https://github.com/ppoulard/meteor-accounts-cas
 cd ~site
-meteor add xaionaro:accounts-cas
+meteor add ppoulard:accounts-cas
 ```
 
 ## Usage
@@ -23,21 +25,31 @@ Put CAS settings in Meteor.settings (for example using METEOR_SETTINGS env or --
 
 If casVersion is not defined, it will assume you use CAS 1.0. (note by xaionaro: option `casVersion` seems to be just ignored in the code, ATM).
 
-This package depends on NPM node-cas https://github.com/anrizal/node-cas which is forked from https://github.com/kcbanner/node-cas 
-There is a pull-request to https://github.com/kcbanner/node-cas. If the pull-request accepted, anrizal [promised to](https://github.com/anrizal/meteor-accounts-cas/commit/78a6c2ab1673213cb41a4f9ce9544f76f7fbb3ad) will change the dependency in his fork. 
-
 Server side settings:
 
 ```
 Meteor.settings = {
-	"cas": {
-		"validateUrl": "https://cas.example.com/serviceValidate",
-		"autoClose": true,
-		"casVersion": 2.0,
-		"popup": true,
-	}
+    "cas": {
+        "baseUrl": "https://cas.example.com/cas",
+        "autoClose": true,
+        "validateUrl":"https://cas.example.com/cas/p3/serviceValidate",
+        "casVersion": 3.0,
+        "attributes": {
+            "debug" : true
+        }
+    },
 }
 ```
+
+CAS `attributes` settings :
+
+* `attributes`: by default `{}` : all default values below will apply
+* *  `debug` : by default `false` ; `true` will print to the server console the CAS attribute names to map, the CAS attributes values retrieved, if necessary the new user account created, and finally the user to use
+* *  `id` : by default, the CAS user is used for the user account, but you can specified another CAS attribute
+* *  `firstname` : by default `cas:givenName` ; but you can use your own CAS attribute
+* *  `lastname` : by default `cas:sn` (respectively) ; but you can use your own CAS attribute
+* *  `fullname` : by default unused, but if you specify your own CAS attribute, it will be used instead of the `firstname` + `lastname`
+* *  `mail` : by default `cas:mail`
 
 Client side settings:
 
