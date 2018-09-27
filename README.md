@@ -2,11 +2,13 @@ This is a merged repository of useful forks of: atoy40:accounts-cas
 ===================
 ([(https://atmospherejs.com/atoy40/accounts-cas](https://atmospherejs.com/atoy40/accounts-cas))
 
-## Essential improvements to atoy40 and xaionaro versions
+## Essential improvements by ppoulard to atoy40 and xaionaro versions
 
 * Added support of CAS attributes
 
 With this plugin, you can pick CAS attributes : https://github.com/joshchan/node-cas/wiki/CAS-Attributes
+
+Moved to Wekan GitHub org from from https://github.com/ppoulard/meteor-accounts-cas
 
 ## Install
 
@@ -14,9 +16,9 @@ With this plugin, you can pick CAS attributes : https://github.com/joshchan/node
 cd ~site
 mkdir packages
 cd packages
-git clone https://github.com/ppoulard/meteor-accounts-cas
+git clone https://github.com/wekan/meteor-accounts-cas
 cd ~site
-meteor add ppoulard:accounts-cas
+meteor add wekan:accounts-cas
 ```
 
 ## Usage

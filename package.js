@@ -1,8 +1,8 @@
 Package.describe({
   summary: "CAS support for accounts",
   version: "0.1.0",
-  name: "ppoulard:accounts-cas",
-  git: "https://github.com/ppoulard/meteor-accounts-cas"
+  name: "wekan:accounts-cas",
+  git: "https://github.com/wekan/meteor-accounts-cas"
 });
 
 Package.onUse(function(api) {
